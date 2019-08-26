@@ -1,4 +1,4 @@
-import React, { useReducer } from 'react';
+import React, { useReducer } from "react";
 
 export default (reducer, actions, initialState) => {
   const Context = React.createContext();
@@ -11,8 +11,6 @@ export default (reducer, actions, initialState) => {
     for (key in actions) {
       boundActions[key] = actions[key](dispatch);
     }
-
-    console.log(boundActions);
 
     return <Context.Provider value={{ state, ...boundActions }}>{children}</Context.Provider>;
   };
