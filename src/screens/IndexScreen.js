@@ -1,31 +1,50 @@
 import React, { useContext } from "react";
-import { View, Text, StyleSheet, FlatList, Button, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  Button,
+  TouchableOpacity,
+  TouchableWithoutFeedback
+} from "react-native";
 import { Context } from "../context/BlogContext";
 import { Feather } from "@expo/vector-icons";
 
-const IndexScreen = () => {
-  const { state, addBlogPost, deleteBlogPost } = useContext(Context);
+const IndexScreen = ({ navigation }) => {
+  const { state, deleteBlogPost } = useContext(Context);
 
   return (
     <View>
-      <Button title="Add Post" onPress={addBlogPost} />
       <FlatList
         style
         data={state}
         keyExtractor={blogPost => blogPost.title}
         renderItem={({ item, index }) => {
           return (
-            <View style={[styles.row, { borderTopWidth: index === 0 ? 1 : 0 }]}>
-              <Text style={styles.title}>{`${item.title} - ${item.id}`}</Text>
-              <TouchableOpacity onPress={() => deleteBlogPost(item.id)}>
-                <Feather style={styles.icon} name="trash" />
-              </TouchableOpacity>
-            </View>
+            <TouchableWithoutFeedback onPress={() => navigation.navigate("Show", { id: item.id })}>
+              <View style={[styles.row, { borderTopWidth: index === 0 ? 1 : 0 }]}>
+                <Text style={styles.title}>{`${item.title} - ${item.id}`}</Text>
+                <TouchableOpacity onPress={() => deleteBlogPost(item.id)}>
+                  <Feather style={styles.deleteIcon} name="trash" />
+                </TouchableOpacity>
+              </View>
+            </TouchableWithoutFeedback>
           );
         }}
       />
     </View>
   );
+};
+
+IndexScreen.navigationOptions = ({ navigation }) => {
+  return {
+    headerRight: (
+      <TouchableOpacity onPress={() => navigation.navigate("Create")}>
+        <Feather style={styles.createIcon} name="plus" size={30} />
+      </TouchableOpacity>
+    )
+  };
 };
 
 const styles = StyleSheet.create({
@@ -40,8 +59,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18
   },
-  icon: {
+  deleteIcon: {
     fontSize: 24
+  },
+  createIcon: {
+    fontSize: 24,
+    marginRight: 8
   }
 });
 
